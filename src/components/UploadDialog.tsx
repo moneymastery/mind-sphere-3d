@@ -46,10 +46,10 @@ export const UploadDialog = ({ open, onOpenChange }: UploadDialogProps) => {
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 25 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Please upload a file smaller than 10MB",
+        description: "Please upload a file smaller than 25MB",
         variant: "destructive",
       });
       return;
@@ -122,7 +122,7 @@ export const UploadDialog = ({ open, onOpenChange }: UploadDialogProps) => {
                 </Button>
               </label>
               <p className="text-xs text-muted-foreground mt-4">
-                Supported: PNG, JPG, JSON (max 10MB)
+                Supported: PNG, JPG, JSON (max 25MB)
               </p>
             </div>
           ) : (
