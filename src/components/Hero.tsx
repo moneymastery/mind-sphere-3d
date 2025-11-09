@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Brain, Upload, Sparkles } from "lucide-react";
+import { UploadDialog } from "./UploadDialog";
 
 export const Hero = ({ onExplore }: { onExplore: () => void }) => {
+  const [uploadOpen, setUploadOpen] = useState(false);
   return (
     <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
       {/* Animated background elements */}
@@ -67,6 +70,7 @@ export const Hero = ({ onExplore }: { onExplore: () => void }) => {
               size="lg"
               variant="outline"
               className="border-primary/50 text-foreground hover:bg-primary/10 px-8 py-6 text-lg"
+              onClick={() => setUploadOpen(true)}
             >
               <Upload className="w-5 h-5 mr-2" />
               Upload Your Map
@@ -74,6 +78,8 @@ export const Hero = ({ onExplore }: { onExplore: () => void }) => {
           </div>
         </motion.div>
 
+        {/* Upload Dialog */}
+        <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
         {/* Feature cards */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
