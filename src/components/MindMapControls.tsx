@@ -1,12 +1,14 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ZoomIn, ZoomOut, RotateCcw, Maximize2 } from "lucide-react";
+import { RotateCcw, Maximize2, Download } from "lucide-react";
 
 interface MindMapControlsProps {
   onReset?: () => void;
+  onFitToScreen?: () => void;
+  onExport?: () => void;
 }
 
-export const MindMapControls = ({ onReset }: MindMapControlsProps) => {
+export const MindMapControls = ({ onReset, onFitToScreen, onExport }: MindMapControlsProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -17,18 +19,10 @@ export const MindMapControls = ({ onReset }: MindMapControlsProps) => {
         size="icon"
         variant="outline"
         className="glass-panel hover:bg-primary/20"
-        title="Zoom In"
+        onClick={onFitToScreen}
+        title="Fit to Screen - Auto-frame entire mind map"
       >
-        <ZoomIn className="w-5 h-5" />
-      </Button>
-      
-      <Button
-        size="icon"
-        variant="outline"
-        className="glass-panel hover:bg-primary/20"
-        title="Zoom Out"
-      >
-        <ZoomOut className="w-5 h-5" />
+        <Maximize2 className="w-5 h-5" />
       </Button>
       
       <Button
@@ -36,7 +30,7 @@ export const MindMapControls = ({ onReset }: MindMapControlsProps) => {
         variant="outline"
         className="glass-panel hover:bg-primary/20"
         onClick={onReset}
-        title="Reset View"
+        title="Reset View - Return to default camera position"
       >
         <RotateCcw className="w-5 h-5" />
       </Button>
@@ -45,9 +39,10 @@ export const MindMapControls = ({ onReset }: MindMapControlsProps) => {
         size="icon"
         variant="outline"
         className="glass-panel hover:bg-primary/20"
-        title="Fullscreen"
+        onClick={onExport}
+        title="Export Mind Map - Download as JSON"
       >
-        <Maximize2 className="w-5 h-5" />
+        <Download className="w-5 h-5" />
       </Button>
     </motion.div>
   );

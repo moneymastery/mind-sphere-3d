@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Hero } from "@/components/Hero";
 import { MindMapViewer } from "@/components/MindMap3D/MindMapViewer";
-import { MindMapControls } from "@/components/MindMapControls";
 import { NodeInspector } from "@/components/NodeInspector";
 import { sampleMindMap } from "@/data/sampleMindMap";
 import { MindMapNode, MindMapData } from "@/types/mindmap";
@@ -93,8 +92,29 @@ const Index = () => {
               />
             </div>
 
-            {/* Controls */}
-            <MindMapControls onReset={handleReset} />
+            {/* Export Control */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="fixed right-6 bottom-6 z-10"
+            >
+              <Button
+                variant="outline"
+                className="glass-panel hover:bg-primary/20 gap-2"
+                onClick={() => {
+                  const dataStr = JSON.stringify(currentMindMap, null, 2);
+                  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                  const url = URL.createObjectURL(dataBlob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `${currentMindMap.title.replace(/\s+/g, '_')}_mindmap.json`;
+                  link.click();
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                Export Mind Map
+              </Button>
+            </motion.div>
 
             {/* Node Inspector */}
             <NodeInspector
