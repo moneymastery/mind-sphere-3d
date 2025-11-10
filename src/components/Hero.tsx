@@ -3,8 +3,15 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Brain, Upload, Sparkles } from "lucide-react";
 import { UploadDialog } from "./UploadDialog";
+import { MindMapData } from "@/types/mindmap";
 
-export const Hero = ({ onExplore }: { onExplore: () => void }) => {
+export const Hero = ({ 
+  onExplore, 
+  onUploadComplete 
+}: { 
+  onExplore: () => void;
+  onUploadComplete?: (mindMap: MindMapData) => void;
+}) => {
   const [uploadOpen, setUploadOpen] = useState(false);
   return (
     <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
@@ -79,7 +86,11 @@ export const Hero = ({ onExplore }: { onExplore: () => void }) => {
         </motion.div>
 
         {/* Upload Dialog */}
-        <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
+        <UploadDialog 
+          open={uploadOpen} 
+          onOpenChange={setUploadOpen}
+          onUploadComplete={onUploadComplete}
+        />
         {/* Feature cards */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}

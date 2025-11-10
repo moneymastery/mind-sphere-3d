@@ -5,17 +5,24 @@ import { MindMapViewer } from "@/components/MindMap3D/MindMapViewer";
 import { MindMapControls } from "@/components/MindMapControls";
 import { NodeInspector } from "@/components/NodeInspector";
 import { sampleMindMap } from "@/data/sampleMindMap";
-import { MindMapNode } from "@/types/mindmap";
+import { MindMapNode, MindMapData } from "@/types/mindmap";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 const Index = () => {
   const [showViewer, setShowViewer] = useState(false);
   const [selectedNode, setSelectedNode] = useState<MindMapNode | null>(null);
+  const [currentMindMap, setCurrentMindMap] = useState<MindMapData>(sampleMindMap);
   const [key, setKey] = useState(0);
 
   const handleExplore = () => {
     setShowViewer(true);
+  };
+
+  const handleUploadComplete = (mindMap: MindMapData) => {
+    setCurrentMindMap(mindMap);
+    setShowViewer(true);
+    setKey((prev) => prev + 1);
   };
 
   const handleBack = () => {
@@ -38,7 +45,7 @@ const Index = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <Hero onExplore={handleExplore} />
+            <Hero onExplore={handleExplore} onUploadComplete={handleUploadComplete} />
           </motion.div>
         ) : (
           <motion.div
@@ -61,8 +68,8 @@ const Index = () => {
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
                   <div>
-                    <h1 className="text-xl font-bold text-primary">{sampleMindMap.title}</h1>
-                    <p className="text-sm text-muted-foreground">{sampleMindMap.description}</p>
+                    <h1 className="text-xl font-bold text-primary">{currentMindMap.title}</h1>
+                    <p className="text-sm text-muted-foreground">{currentMindMap.description}</p>
                   </div>
                 </div>
                 
@@ -81,7 +88,7 @@ const Index = () => {
             <div className="h-screen pt-20">
               <MindMapViewer
                 key={key}
-                rootNode={sampleMindMap.rootNode}
+                rootNode={currentMindMap.rootNode}
                 onNodeClick={setSelectedNode}
               />
             </div>

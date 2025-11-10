@@ -1,17 +1,22 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Upload, FileImage, FileJson, X } from "lucide-react";
+import { Upload, FileImage, FileJson, X, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Progress } from "@/components/ui/progress";
+import { MindMapData } from "@/types/mindmap";
 
 interface UploadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onUploadComplete?: (mindMap: MindMapData) => void;
 }
 
-export const UploadDialog = ({ open, onOpenChange }: UploadDialogProps) => {
+export const UploadDialog = ({ open, onOpenChange, onUploadComplete }: UploadDialogProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { toast } = useToast();
 
   const handleDrag = (e: React.DragEvent) => {
@@ -67,15 +72,74 @@ export const UploadDialog = ({ open, onOpenChange }: UploadDialogProps) => {
   const handleUpload = async () => {
     if (!selectedFile) return;
 
-    // TODO: Implement actual upload processing with AI
-    toast({
-      title: "Upload received!",
-      description: `Processing ${selectedFile.name}... AI integration coming soon!`,
-    });
+    setIsUploading(true);
+    setUploadProgress(10);
 
-    // Reset and close
-    setSelectedFile(null);
-    onOpenChange(false);
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      const fileDataPromise = new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(selectedFile);
+      });
+
+      const fileData = await fileDataPromise;
+      setUploadProgress(30);
+
+      // Call edge function to process the file
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-mindmap`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            fileData,
+            fileType: selectedFile.type,
+            fileName: selectedFile.name,
+          }),
+        }
+      );
+
+      setUploadProgress(70);
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Upload failed");
+      }
+
+      const result = await response.json();
+      setUploadProgress(100);
+
+      if (result.success && result.mindMap) {
+        toast({
+          title: "Success!",
+          description: `${selectedFile.name} processed successfully`,
+        });
+
+        // Call the callback with the processed mind map
+        onUploadComplete?.(result.mindMap);
+
+        // Reset and close
+        setSelectedFile(null);
+        setIsUploading(false);
+        setUploadProgress(0);
+        onOpenChange(false);
+      } else {
+        throw new Error("Failed to process mind map");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload failed",
+        description: error instanceof Error ? error.message : "Please try again",
+        variant: "destructive",
+      });
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
   };
 
   const removeFile = () => {
@@ -93,7 +157,19 @@ export const UploadDialog = ({ open, onOpenChange }: UploadDialogProps) => {
         </DialogHeader>
 
         <div className="space-y-4">
-          {!selectedFile ? (
+          {isUploading ? (
+            <div className="glass-panel p-8 rounded-lg border border-primary/30 text-center">
+              <Loader2 className="w-12 h-12 mx-auto mb-4 text-primary animate-spin" />
+              <p className="text-lg font-medium text-foreground mb-2">
+                Processing your mind map...
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Using AI to analyze and structure your content
+              </p>
+              <Progress value={uploadProgress} className="w-full" />
+              <p className="text-xs text-muted-foreground mt-2">{uploadProgress}%</p>
+            </div>
+          ) : !selectedFile ? (
             <div
               className={`border-2 border-dashed rounded-lg p-8 text-center transition-all ${
                 dragActive
@@ -164,10 +240,19 @@ export const UploadDialog = ({ open, onOpenChange }: UploadDialogProps) => {
             <Button
               className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 node-glow"
               onClick={handleUpload}
-              disabled={!selectedFile}
+              disabled={!selectedFile || isUploading}
             >
-              <Upload className="w-4 h-4 mr-2" />
-              Process File
+              {isUploading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Process File
+                </>
+              )}
             </Button>
           </div>
 
