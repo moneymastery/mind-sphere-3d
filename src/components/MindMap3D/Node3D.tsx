@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Sphere, Text, Billboard, Html } from "@react-three/drei";
+import { Box, Billboard, Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -16,71 +16,65 @@ export const Node3D = ({ position, label, depth, onClick, isExpanded, isFocused 
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
-  // Subtle pulsing animation
-  useFrame((state) => {
-    if (meshRef.current) {
-      const scale = 1 + Math.sin(state.clock.elapsedTime * 1.5) * 0.03;
-      meshRef.current.scale.setScalar(hovered ? scale * 1.15 : scale);
+  // Subtle hover animation
+  useFrame(() => {
+    if (meshRef.current && hovered) {
+      meshRef.current.scale.set(1.05, 1.05, 1.05);
+    } else if (meshRef.current) {
+      meshRef.current.scale.set(1, 1, 1);
     }
   });
 
-  // Educational-friendly color palette
+  // Simple color palette based on depth
   const getColor = () => {
     const colors = [
-      "hsl(192, 85%, 58%)", // Primary - bright cyan
-      "hsl(262, 83%, 58%)", // Secondary - purple
-      "hsl(173, 58%, 39%)", // Accent - teal
-      "hsl(217, 91%, 60%)", // Blue
-      "hsl(142, 76%, 36%)", // Green
-      "hsl(45, 93%, 47%)",  // Yellow
+      "#1e293b", // slate-800 for root
+      "#334155", // slate-700 for level 1
+      "#475569", // slate-600 for level 2
+      "#64748b", // slate-500 for level 3
+      "#94a3b8", // slate-400 for level 4+
     ];
-    return colors[depth % colors.length];
+    return colors[Math.min(depth, colors.length - 1)];
   };
 
-  const nodeSize = Math.max(0.4, 1.2 - depth * 0.15);
-  const fontSize = Math.max(0.25, 0.4 - depth * 0.04);
+  const boxSize: [number, number, number] = [2, 0.8, 0.3];
 
   return (
     <group position={position}>
-      {/* Main sphere */}
-      <Sphere
+      {/* Simple box node */}
+      <Box
         ref={meshRef}
-        args={[nodeSize, 32, 32]}
+        args={boxSize}
         onClick={onClick}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
         <meshStandardMaterial
           color={getColor()}
-          emissive={getColor()}
-          emissiveIntensity={hovered ? 0.5 : 0.25}
-          roughness={0.3}
-          metalness={0.6}
+          roughness={0.4}
+          metalness={0.1}
         />
-      </Sphere>
+      </Box>
       
-      {/* Billboard text that always faces camera */}
-      <Billboard position={[0, nodeSize + 0.6, 0]} follow={true}>
+      {/* Text label on the box */}
+      <Billboard follow={true}>
         <Html
           center
-          distanceFactor={8}
+          distanceFactor={6}
           style={{
             pointerEvents: 'none',
             userSelect: 'none',
           }}
         >
           <div
-            className="px-3 py-1.5 rounded-md shadow-lg"
+            className="px-2 py-1 text-white text-center"
             style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.75)',
-              backdropFilter: 'blur(8px)',
-              border: `2px solid ${getColor()}`,
-              color: 'white',
-              fontSize: `${fontSize * 16}px`,
+              fontSize: depth === 0 ? '14px' : '12px',
               fontWeight: depth === 0 ? 'bold' : 'normal',
               whiteSpace: 'nowrap',
-              maxWidth: '200px',
-              textAlign: 'center',
+              maxWidth: '180px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             {label}
@@ -88,46 +82,16 @@ export const Node3D = ({ position, label, depth, onClick, isExpanded, isFocused 
         </Html>
       </Billboard>
       
-      {/* Glow ring for expanded nodes */}
-      {isExpanded && (
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[nodeSize * 1.3, nodeSize * 1.5, 32]} />
-          <meshBasicMaterial
-            color={getColor()}
-            transparent
-            opacity={0.6}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
-      )}
-      
-      {/* Focus indicator */}
+      {/* Simple focus indicator */}
       {isFocused && (
-        <>
-          <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[nodeSize * 1.6, nodeSize * 1.8, 32]} />
-            <meshBasicMaterial
-              color="#ffffff"
-              transparent
-              opacity={0.8}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-          <pointLight color={getColor()} intensity={2} distance={10} />
-        </>
-      )}
-      
-      {/* Depth indicator platform */}
-      {depth > 0 && (
-        <mesh position={[0, -nodeSize - 0.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[nodeSize * 0.8, 16]} />
+        <Box args={[boxSize[0] + 0.2, boxSize[1] + 0.2, boxSize[2] + 0.1]}>
           <meshBasicMaterial
-            color={getColor()}
+            color="#3b82f6"
             transparent
-            opacity={0.2}
-            side={THREE.DoubleSide}
+            opacity={0.3}
+            wireframe
           />
-        </mesh>
+        </Box>
       )}
     </group>
   );

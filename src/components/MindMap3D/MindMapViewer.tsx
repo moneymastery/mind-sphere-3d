@@ -235,35 +235,23 @@ export const MindMapViewer = ({ rootNode, onNodeClick }: MindMapViewerProps) => 
         />
         
         <Suspense fallback={null}>
-          {/* Improved lighting for educational clarity */}
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[10, 10, 5]} intensity={0.8} />
-          <directionalLight position={[-10, -5, -5]} intensity={0.4} color="#a78bfa" />
-          <hemisphereLight args={["#ffffff", "#444444", 0.5]} />
+          {/* Simple, clean lighting */}
+          <ambientLight intensity={0.8} />
+          <directionalLight position={[10, 10, 5]} intensity={0.6} />
           
-          {/* Reference grid */}
+          {/* Subtle background grid */}
           <Grid
-            args={[50, 50]}
+            args={[100, 100]}
             cellSize={2}
-            cellThickness={0.5}
-            cellColor="#3dd9eb"
+            cellThickness={0.3}
+            cellColor="#e2e8f0"
             sectionSize={10}
-            sectionThickness={1}
-            sectionColor="#a78bfa"
-            fadeDistance={40}
+            sectionThickness={0.5}
+            sectionColor="#cbd5e1"
+            fadeDistance={50}
             fadeStrength={1}
-            position={[0, -10, 0]}
+            position={[0, -8, 0]}
             infiniteGrid
-          />
-          
-          <Stars
-            radius={100}
-            depth={50}
-            count={3000}
-            factor={3}
-            saturation={0}
-            fade
-            speed={0.5}
           />
 
           {/* Render connections */}

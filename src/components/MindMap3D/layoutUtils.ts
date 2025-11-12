@@ -7,12 +7,12 @@ export interface NodePosition {
   position: [number, number, number];
 }
 
-// Tree Layout - Top-down hierarchical structure
+// Simple Tree Layout - Clean hierarchical structure like traditional mind maps
 export const calculateTreeLayout = (
   node: MindMapNode,
   expandedNodes: Set<string>,
   position: [number, number, number] = [0, 0, 0],
-  levelWidth: number = 12
+  levelWidth: number = 15
 ): NodePosition[] => {
   const result: NodePosition[] = [{ node, position }];
 
@@ -21,20 +21,20 @@ export const calculateTreeLayout = (
   }
 
   const childCount = node.children.length;
-  const totalWidth = Math.max(levelWidth, childCount * 3);
-  const spacing = totalWidth / (childCount + 1);
+  const spacing = 5; // Fixed spacing between nodes
+  const totalWidth = childCount * spacing;
 
   node.children.forEach((child, index) => {
-    const x = position[0] - totalWidth / 2 + spacing * (index + 1);
-    const y = position[1] - 4; // Move down for each level
-    const z = position[2] - 2; // Move back for depth perception
+    const x = position[0] - totalWidth / 2 + spacing * index + spacing / 2;
+    const y = position[1] - 5; // Vertical spacing between levels
+    const z = position[2] - 1; // Subtle depth
 
     const childPosition: [number, number, number] = [x, y, z];
     const childResults = calculateTreeLayout(
       child,
       expandedNodes,
       childPosition,
-      totalWidth / childCount
+      spacing * childCount
     );
     result.push(...childResults);
   });
