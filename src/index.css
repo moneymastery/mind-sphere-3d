@@ -2,70 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
-/* MindSphere 3D Design System - All colors MUST be HSL */
+/* NotebookLM-inspired Design System - All colors MUST be HSL */
 
 @layer base {
   :root {
-    --background: 220 40% 6%;
+    --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
-    --card: 220 35% 8%;
+    --card: 217 33% 17%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 35% 8%;
+    --popover: 217 33% 17%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 190 95% 55%;
-    --primary-foreground: 220 40% 6%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 260 70% 65%;
-    --secondary-foreground: 220 40% 6%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 220 30% 15%;
-    --muted-foreground: 210 20% 65%;
+    --muted: 217 19% 27%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 280 85% 70%;
-    --accent-foreground: 220 40% 6%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 30% 18%;
-    --input: 220 30% 18%;
-    --ring: 190 95% 55%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* MindSphere custom tokens */
-    --space-deep: 220 45% 4%;
-    --space-mid: 220 40% 8%;
-    --node-glow: 190 95% 55%;
-    --node-secondary: 260 70% 65%;
-    --node-tertiary: 280 85% 70%;
+    /* NotebookLM custom tokens */
+    --nb-blue: 217 91% 60%;
+    --nb-surface: 217 33% 17%;
+    --nb-surface-variant: 215 28% 22%;
+    --nb-outline: 215 16% 47%;
     
-    --gradient-cosmic: linear-gradient(135deg, hsl(220 45% 4%), hsl(260 60% 12%));
-    --gradient-glow: linear-gradient(135deg, hsl(190 95% 55% / 0.2), hsl(280 85% 70% / 0.2));
-    --gradient-node: linear-gradient(135deg, hsl(190 95% 55%), hsl(260 70% 65%));
+    --gradient-bg: linear-gradient(180deg, hsl(222 47% 11%) 0%, hsl(221 39% 11%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(217 33% 17%), hsl(215 28% 22%));
     
-    --shadow-glow: 0 0 30px hsl(190 95% 55% / 0.3);
-    --shadow-node: 0 8px 32px hsl(190 95% 55% / 0.4);
-    --shadow-deep: 0 20px 60px hsl(220 45% 4% / 0.8);
+    --shadow-sm: 0 1px 2px hsl(222 47% 11% / 0.3);
+    --shadow-md: 0 4px 6px hsl(222 47% 11% / 0.4);
+    --shadow-lg: 0 10px 15px hsl(222 47% 11% / 0.5);
     
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-background: 220 35% 8%;
+    --sidebar-background: 217 33% 17%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 190 95% 55%;
-    --sidebar-primary-foreground: 220 40% 6%;
-    --sidebar-accent: 220 30% 15%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 217 19% 27%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 30% 18%;
-    --sidebar-ring: 190 95% 55%;
+    --sidebar-border: 215 16% 47%;
+    --sidebar-ring: 217 91% 60%;
   }
 
   .dark {
-    --background: 220 40% 6%;
+    --background: 222 47% 11%;
     --foreground: 210 40% 98%;
   }
 }
@@ -77,21 +75,26 @@
 
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(135deg, hsl(220 45% 4%), hsl(260 60% 12%));
+    background: var(--gradient-bg);
     background-attachment: fixed;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply backdrop-blur-xl bg-card/40 border border-border/50;
+    @apply backdrop-blur-md bg-card/80 border border-border;
   }
   
-  .glow-text {
-    text-shadow: 0 0 20px hsl(var(--node-glow) / 0.5);
+  .nb-surface {
+    background: var(--gradient-surface);
   }
   
-  .node-glow {
-    box-shadow: var(--shadow-glow);
+  .nb-shadow {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .nb-transition {
+    transition: var(--transition-base);
   }
 }

@@ -200,8 +200,8 @@ export const MindMapViewer = ({ rootNode, onNodeClick }: MindMapViewerProps) => 
       >
         <Button
           size="icon"
-          variant="outline"
-          className="glass-panel hover:bg-primary/20"
+          variant="ghost"
+          className="glass-panel hover:bg-muted nb-transition"
           onClick={handleFitToScreen}
           title="Fit to Screen"
         >
@@ -210,8 +210,8 @@ export const MindMapViewer = ({ rootNode, onNodeClick }: MindMapViewerProps) => 
         
         <Button
           size="icon"
-          variant="outline"
-          className="glass-panel hover:bg-primary/20"
+          variant="ghost"
+          className="glass-panel hover:bg-muted nb-transition"
           onClick={handleReset}
           title="Reset View"
         >
@@ -235,22 +235,24 @@ export const MindMapViewer = ({ rootNode, onNodeClick }: MindMapViewerProps) => 
         />
         
         <Suspense fallback={null}>
-          {/* Simple, clean lighting */}
-          <ambientLight intensity={0.8} />
-          <directionalLight position={[10, 10, 5]} intensity={0.6} />
+          {/* Professional NotebookLM-style lighting */}
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[10, 10, 5]} intensity={0.8} color="#ffffff" />
+          <directionalLight position={[-5, 5, -5]} intensity={0.3} color="#8AC0FC" />
+          <hemisphereLight args={["#ffffff", "#1a1a2e", 0.3]} />
           
-          {/* Subtle background grid */}
+          {/* Clean minimal grid */}
           <Grid
-            args={[100, 100]}
-            cellSize={2}
-            cellThickness={0.3}
-            cellColor="#e2e8f0"
-            sectionSize={10}
-            sectionThickness={0.5}
-            sectionColor="#cbd5e1"
-            fadeDistance={50}
-            fadeStrength={1}
-            position={[0, -8, 0]}
+            args={[200, 200]}
+            cellSize={4}
+            cellThickness={0.4}
+            cellColor="#2a3447"
+            sectionSize={20}
+            sectionThickness={0.6}
+            sectionColor="#374356"
+            fadeDistance={80}
+            fadeStrength={2}
+            position={[0, -6, 0]}
             infiniteGrid
           />
 

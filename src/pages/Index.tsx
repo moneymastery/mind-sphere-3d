@@ -55,28 +55,28 @@ const Index = () => {
             className="h-screen relative"
           >
             {/* Header */}
-            <div className="fixed top-0 left-0 right-0 z-20 glass-panel border-b border-border/50">
-              <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
+            <div className="fixed top-0 left-0 right-0 z-20 glass-panel border-b border-border">
+              <div className="container mx-auto px-6 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={handleBack}
-                    className="hover:bg-primary/20"
+                    className="hover:bg-muted nb-transition"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
                   <div>
-                    <h1 className="text-xl font-bold text-primary">{currentMindMap.title}</h1>
-                    <p className="text-sm text-muted-foreground">{currentMindMap.description}</p>
+                    <h1 className="text-lg font-semibold text-foreground">{currentMindMap.title}</h1>
+                    <p className="text-xs text-muted-foreground">{currentMindMap.description}</p>
                   </div>
                 </div>
                 
-                <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
-                  <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/30">
+                <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                  <span className="px-3 py-1.5 rounded-md bg-muted/50 border border-border">
                     Click nodes to expand
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-secondary/10 border border-secondary/30">
+                  <span className="px-3 py-1.5 rounded-md bg-muted/50 border border-border">
                     Drag to rotate
                   </span>
                 </div>
@@ -99,8 +99,8 @@ const Index = () => {
               className="fixed right-6 bottom-6 z-10"
             >
               <Button
-                variant="outline"
-                className="glass-panel hover:bg-primary/20 gap-2"
+                variant="default"
+                className="glass-panel hover:bg-primary nb-transition shadow-lg gap-2"
                 onClick={() => {
                   const dataStr = JSON.stringify(currentMindMap, null, 2);
                   const dataBlob = new Blob([dataStr], { type: 'application/json' });

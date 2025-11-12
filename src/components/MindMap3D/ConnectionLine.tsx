@@ -7,25 +7,28 @@ interface ConnectionLineProps {
 }
 
 export const ConnectionLine = ({ start, end }: ConnectionLineProps) => {
-  // Simple curved connection like traditional mind maps
-  const midY = (start[1] + end[1]) / 2;
+  // Clean, professional connection lines like NotebookLM
+  const startOffset = new THREE.Vector3(start[0], start[1] - 0.5, start[2]);
+  const endOffset = new THREE.Vector3(end[0], end[1] + 0.5, end[2]);
+  
+  const midY = (startOffset.y + endOffset.y) / 2;
   
   const curve = new THREE.CubicBezierCurve3(
-    new THREE.Vector3(...start),
-    new THREE.Vector3(start[0], midY, start[2]),
-    new THREE.Vector3(end[0], midY, end[2]),
-    new THREE.Vector3(...end)
+    startOffset,
+    new THREE.Vector3(startOffset.x, midY, startOffset.z),
+    new THREE.Vector3(endOffset.x, midY, endOffset.z),
+    endOffset
   );
 
-  const points = curve.getPoints(16);
+  const points = curve.getPoints(24);
 
   return (
     <Line
       points={points}
-      color="#64748b"
-      lineWidth={1.5}
+      color="#5F9CF7"
+      lineWidth={2}
       transparent
-      opacity={0.5}
+      opacity={0.4}
     />
   );
 };

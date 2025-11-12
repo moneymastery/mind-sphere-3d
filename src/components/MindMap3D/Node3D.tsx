@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Box, Billboard, Html } from "@react-three/drei";
+import { RoundedBox, Billboard, Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -16,65 +16,67 @@ export const Node3D = ({ position, label, depth, onClick, isExpanded, isFocused 
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
-  // Subtle hover animation
+  // Smooth scale animation
   useFrame(() => {
-    if (meshRef.current && hovered) {
-      meshRef.current.scale.set(1.05, 1.05, 1.05);
-    } else if (meshRef.current) {
-      meshRef.current.scale.set(1, 1, 1);
+    if (meshRef.current) {
+      const targetScale = hovered ? 1.08 : 1;
+      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.15);
     }
   });
 
-  // Simple color palette based on depth
+  // NotebookLM-style colors - clean blues and grays
   const getColor = () => {
-    const colors = [
-      "#1e293b", // slate-800 for root
-      "#334155", // slate-700 for level 1
-      "#475569", // slate-600 for level 2
-      "#64748b", // slate-500 for level 3
-      "#94a3b8", // slate-400 for level 4+
-    ];
-    return colors[Math.min(depth, colors.length - 1)];
+    if (depth === 0) return "#4C8BF5"; // Google blue for root
+    if (depth === 1) return "#5F9CF7";
+    if (depth === 2) return "#72ADF9";
+    return "#8AC0FC"; // Lighter blue for deeper nodes
   };
 
-  const boxSize: [number, number, number] = [2, 0.8, 0.3];
+  const boxSize: [number, number, number] = [3.5, 1, 0.15];
 
   return (
     <group position={position}>
-      {/* Simple box node */}
-      <Box
+      {/* Rounded box with NotebookLM aesthetic */}
+      <RoundedBox
         ref={meshRef}
         args={boxSize}
+        radius={0.08}
+        smoothness={4}
         onClick={onClick}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
         <meshStandardMaterial
           color={getColor()}
-          roughness={0.4}
-          metalness={0.1}
+          roughness={0.2}
+          metalness={0.05}
+          emissive={getColor()}
+          emissiveIntensity={hovered ? 0.15 : 0.05}
         />
-      </Box>
+      </RoundedBox>
       
-      {/* Text label on the box */}
+      {/* Clean text label */}
       <Billboard follow={true}>
         <Html
           center
-          distanceFactor={6}
+          distanceFactor={5}
           style={{
             pointerEvents: 'none',
             userSelect: 'none',
           }}
         >
           <div
-            className="px-2 py-1 text-white text-center"
             style={{
-              fontSize: depth === 0 ? '14px' : '12px',
-              fontWeight: depth === 0 ? 'bold' : 'normal',
+              color: '#fff',
+              fontSize: depth === 0 ? '16px' : '13px',
+              fontWeight: depth === 0 ? '600' : '500',
               whiteSpace: 'nowrap',
-              maxWidth: '180px',
+              maxWidth: '200px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+              letterSpacing: '-0.01em',
+              padding: '2px 8px',
             }}
           >
             {label}
@@ -82,16 +84,16 @@ export const Node3D = ({ position, label, depth, onClick, isExpanded, isFocused 
         </Html>
       </Billboard>
       
-      {/* Simple focus indicator */}
+      {/* Subtle focus ring */}
       {isFocused && (
-        <Box args={[boxSize[0] + 0.2, boxSize[1] + 0.2, boxSize[2] + 0.1]}>
+        <RoundedBox args={[boxSize[0] + 0.15, boxSize[1] + 0.15, boxSize[2] + 0.05]} radius={0.1} smoothness={4}>
           <meshBasicMaterial
-            color="#3b82f6"
+            color="#ffffff"
             transparent
-            opacity={0.3}
-            wireframe
+            opacity={0.2}
+            side={THREE.DoubleSide}
           />
-        </Box>
+        </RoundedBox>
       )}
     </group>
   );
